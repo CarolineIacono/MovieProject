@@ -18,11 +18,11 @@ public class MainActivityFragment extends Fragment {
 
     MovieItem[] movieItems = {
 
-            new MovieItem("Aladdin", "2", 0),
-            new MovieItem("Cinderella", "2", 0),
-            new MovieItem("101 Dalmations", "101", 0),
-            new MovieItem("Snow White", "3", 0),
-            new MovieItem("Lion King", "3", 0)
+            new MovieItem("Aladdin", "A boy and his carpet."),
+            new MovieItem("Cinderella", "A girl and her shoes."),
+            new MovieItem("101 Dalmations", "A woman and her fur coat."),
+            new MovieItem("Snow White", "A witch and her apple."),
+            new MovieItem("Lion King", "A lion and his daddy issues.")
 
     };
 

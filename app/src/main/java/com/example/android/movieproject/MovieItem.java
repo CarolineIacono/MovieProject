@@ -6,15 +6,14 @@ package com.example.android.movieproject;
 public class MovieItem {
 
     String name;
-    String number;
-    int image; //drawable reference id
+    String description;
 
 
-public MovieItem(String vName, String vNumber, int image)
+
+public MovieItem(String vName, String vDescription)
 {
         this.name = vName;
-    this.number = vNumber;
-    this.image = image;
+    this.description = vDescription;
 
 
 }

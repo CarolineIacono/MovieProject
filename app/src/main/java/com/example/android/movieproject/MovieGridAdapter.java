@@ -17,6 +17,9 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
 
     public MovieGridAdapter (Activity context, List<MovieItem> movieItems) {
         super(context, 0, movieItems);
+
+        final String MOVIE_BASE_URL =
+                "http://api.themoviedb.org/3/movie/popular?";
     }
 @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -30,6 +33,9 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
 
     TextView name = (TextView)convertView.findViewById(R.id.name);
     name.setText(getItem(position).name);
+
+    TextView description = (TextView)convertView.findViewById(R.id.description);
+    description.setText(getItem(position).description);
 
     return convertView;
 }
