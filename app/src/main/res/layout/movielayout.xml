@@ -6,10 +6,14 @@
     android:layout_height="match_parent">
 
     <GridView
-        android:id="@+id/movie_grid"
+        android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="auto_fit">
+        android:numColumns="auto_fit"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center"
+        android:stretchMode="columnWidth">
 
 
     </GridView>

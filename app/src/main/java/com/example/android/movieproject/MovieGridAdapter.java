@@ -1,43 +1,71 @@
 package com.example.android.movieproject;
 
 import android.app.Activity;
+import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+
 
 /**
  * Created by carolinestewart on 5/2/16.
  */
 public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
-    private static final String LOG_TAG = MovieGridAdapter.class.getSimpleName();
+    private Context mContext;
+    private int layoutResourceId;
+    private ArrayList<MovieItem> mGridData = new ArrayList<>();
 
-    public MovieGridAdapter (Activity context, List<MovieItem> movieItems) {
-        super(context, 0, movieItems);
+    public MovieGridAdapter (Context mContext, int layoutResourceId, ArrayList<MovieItem> mGridData) {
+        super(mContext, layoutResourceId, mGridData);
+        this.layoutResourceId = layoutResourceId;
+        this.mContext = mContext;
+        this.mGridData = mGridData;
 
-        final String MOVIE_BASE_URL =
-                "http://api.themoviedb.org/3/movie/popular?";
     }
-@Override
+
+
+    public void setGridData(ArrayList<MovieItem> mGridData) {
+        this.mGridData = mGridData;
+        notifyDataSetChanged();
+
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        ViewHolder holder;
 
-    if (convertView == null) {
-        convertView = LayoutInflater.from(getContext()).inflate(
-            R.layout.movie_item, parent, false);
+        if (row == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+            holder = new ViewHolder();
+            holder.titleTextView = (TextView) row.findViewById(R.id.name);
+            holder.imageView = (ImageView) row.findViewById(R.id.movie_grid_image);
+            row.setTag(holder);
+        } else {
+            holder = (ViewHolder) row.getTag();
+        }
 
+        MovieItem item = mGridData.get(position);
+        holder.titleTextView.setText(Html.fromHtml(item.getTitle()));
+
+        Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
+        return row;
     }
 
+    static class ViewHolder {
+        TextView titleTextView;
+        ImageView imageView;
+    }
 
-    TextView name = (TextView)convertView.findViewById(R.id.name);
-    name.setText(getItem(position).name);
-
-    TextView description = (TextView)convertView.findViewById(R.id.description);
-    description.setText(getItem(position).description);
-
-    return convertView;
-}
 
 }
