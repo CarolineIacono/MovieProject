@@ -32,11 +32,9 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
 
     }
 
-
     public void setGridData(ArrayList<MovieItem> mGridData) {
         this.mGridData = mGridData;
         notifyDataSetChanged();
-
     }
 
     @Override

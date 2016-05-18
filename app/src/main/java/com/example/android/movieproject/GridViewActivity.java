@@ -35,7 +35,7 @@ public class GridViewActivity extends AppCompatActivity {
 
     private MovieGridAdapter mGridAdapter;
     private ArrayList<MovieItem> mGridData;
-    private String FEED_URL = "https://api.themoviedb.org/3/movie/550?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
 
 
     @Override
@@ -48,6 +48,9 @@ public class GridViewActivity extends AppCompatActivity {
         mGridData = new ArrayList<>();
         mGridAdapter = new MovieGridAdapter(this, R.layout.movie_item, mGridData);
         mGridView.setAdapter(mGridAdapter);
+
+
+
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -85,8 +88,8 @@ public class GridViewActivity extends AppCompatActivity {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("https://api.themoviedb.org/3/movie/550?api_key=3bdc29f12e89d25098ebe99dbec16f9b");
-
+//                URL url = new URL("https://api.themoviedb.org/3/movie/550?api_key=3bdc29f12e89d25098ebe99dbec16f9b");
+                URL url = new URL(FEED_URL);
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -114,6 +117,9 @@ public class GridViewActivity extends AppCompatActivity {
                     forecastJsonStr = null;
                 }
                 forecastJsonStr = buffer.toString();
+
+                parseResult(forecastJsonStr);
+                result = 1;
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
@@ -153,19 +159,18 @@ public class GridViewActivity extends AppCompatActivity {
         private void parseResult(String result) {
             try {
                 JSONObject response = new JSONObject(result);
-                JSONArray posts = response.optJSONArray("posts");
+                JSONArray posts = response.optJSONArray("results");
                 MovieItem item;
                 for (int i = 0; i < posts.length(); i++) {
                     JSONObject post = posts.optJSONObject(i);
                     String title = post.optString("title");
                     item = new MovieItem();
                     item.setTitle(title);
-                    JSONArray attachments = post.getJSONArray("attachments");
-                    if (null != attachments && attachments.length() > 0) {
-                        JSONObject attachment = attachments.getJSONObject(0);
-                        if (attachment != null)
-                            item.setImage(attachment.getString("url"));
-                    }
+                    String image = post.optString("poster_path");
+                    image = "http://image.tmdb.org/t/p/w185/" + image;
+                    item.setImage(image);
+
+
                     mGridData.add(item);
                 }
             } catch (JSONException e) {
@@ -175,7 +180,7 @@ public class GridViewActivity extends AppCompatActivity {
     }
 
 
-    
+
 
 
 

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#ffcccc"
+    android:background="#000000"
     android:orientation="vertical">
 
 
@@ -10,15 +10,16 @@
         android:id="@+id/movie_grid_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerInside"/>
 
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:gravity="center_vertical"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
         android:minHeight="?android:attr/listPreferredItemHeight"
 
 
