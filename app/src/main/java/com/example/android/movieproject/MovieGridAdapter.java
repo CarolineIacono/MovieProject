@@ -32,6 +32,8 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
 
     }
 
+
+
     public void setGridData(ArrayList<MovieItem> mGridData) {
         this.mGridData = mGridData;
         notifyDataSetChanged();
@@ -47,7 +49,10 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
             holder.titleTextView = (TextView) row.findViewById(R.id.name);
-            holder.imageView = (ImageView) row.findViewById(R.id.movie_grid_image);
+            holder.imageView = (ImageView) row.findViewById(R.id.movieImage);
+            holder.overView = (TextView) row.findViewById(R.id.overview);
+            holder.voteAverage = (TextView) row.findViewById(R.id.vote_average);
+            holder.releaseDate = (TextView) row.findViewById(R.id.release_date);
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
@@ -63,6 +68,9 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
     static class ViewHolder {
         TextView titleTextView;
         ImageView imageView;
+        TextView overView;
+        TextView voteAverage;
+        TextView releaseDate;
     }
 
 

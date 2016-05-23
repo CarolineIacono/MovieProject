@@ -7,7 +7,7 @@
 
 
     <ImageView
-        android:id="@+id/movie_grid_image"
+        android:id="@+id/movieImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerInside"/>
@@ -24,6 +24,17 @@
 
 
         />
+
+    <TextView
+        android:id="@+id/overview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:minHeight="?android:attr/listPreferredItemHeight"/>
+
+
 
 
 

@@ -5,10 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -24,18 +25,44 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-
 /**
  * Created by carolinestewart on 5/6/16.
  */
 public class GridViewActivity extends AppCompatActivity {
     private static final String TAG = GridViewActivity.class.getSimpleName();
+    public static final String EXTRA_MOVIE = "movie";
 
     private GridView mGridView;
 
     private MovieGridAdapter mGridAdapter;
     private ArrayList<MovieItem> mGridData;
     private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        mGridData.clear();
+
+        switch (item.getItemId()) {
+
+            case R.id.popular:
+                new AsyncHttpTask().execute(FEED_URL2);
+                break;
+            case R.id.rated:
+                new AsyncHttpTask().execute(FEED_URL);
+        }
+
+        return true;
+    }
 
 
     @Override
@@ -51,22 +78,20 @@ public class GridViewActivity extends AppCompatActivity {
 
 
 
-
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+           ///take to the details view
+
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
-                MovieItem item = (MovieItem) parent.getItemAtPosition(position);
-
-                Intent intent = new Intent(GridViewActivity.this, DetailsActivity.class);
-                intent.putExtra("title", item.getTitle());
-                intent.putExtra("image", item.getImage());
-
-                ImageView imageView = (ImageView) v.findViewById(R.id.movie_grid_image);
-
-
+                Intent intent = new Intent(GridViewActivity.this, DetailActivity.class);
+                intent.putExtra(EXTRA_MOVIE, (MovieItem)parent.getItemAtPosition(position));
                 startActivity(intent);
+
+
             }
         });
+
 
         new AsyncHttpTask().execute(FEED_URL);
 
@@ -76,6 +101,7 @@ public class GridViewActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(String... params) {
+            String urlString = params[0];
             Integer result = 0;
 
             HttpURLConnection urlConnection = null;
@@ -85,11 +111,8 @@ public class GridViewActivity extends AppCompatActivity {
             String forecastJsonStr = null;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-//                URL url = new URL("https://api.themoviedb.org/3/movie/550?api_key=3bdc29f12e89d25098ebe99dbec16f9b");
-                URL url = new URL(FEED_URL);
+
+                URL url = new URL(urlString);
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -145,6 +168,7 @@ public class GridViewActivity extends AppCompatActivity {
         protected void onPostExecute(Integer result) {
 
             if (result == 1) {
+
                 mGridAdapter.setGridData(mGridData);
 
             } else {
@@ -160,15 +184,31 @@ public class GridViewActivity extends AppCompatActivity {
             try {
                 JSONObject response = new JSONObject(result);
                 JSONArray posts = response.optJSONArray("results");
-                MovieItem item;
                 for (int i = 0; i < posts.length(); i++) {
                     JSONObject post = posts.optJSONObject(i);
+
                     String title = post.optString("title");
-                    item = new MovieItem();
+                    MovieItem item = new MovieItem();
                     item.setTitle(title);
+
                     String image = post.optString("poster_path");
                     image = "http://image.tmdb.org/t/p/w185/" + image;
                     item.setImage(image);
+
+                    String overview = post.optString("overview");
+                    item.setOverview(overview);
+
+                    String vote = post.optString("vote_average");
+                    item.setVote(vote);
+
+                    String release = post.optString("release_date");
+                    item.setRelease(release);
+
+
+
+
+
+
 
 
                     mGridData.add(item);
@@ -177,6 +217,10 @@ public class GridViewActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+
+
+
     }
 
 
