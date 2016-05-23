@@ -36,8 +36,8 @@ public class GridViewActivity extends AppCompatActivity {
 
     private MovieGridAdapter mGridAdapter;
     private ArrayList<MovieItem> mGridData;
-    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[API KEY IN README]";
-    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=[API KEY IN README]";
+    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
 
 
     @Override
