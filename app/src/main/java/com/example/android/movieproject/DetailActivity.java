@@ -24,7 +24,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView overview = (TextView)findViewById(R.id.overview);
         overview.setText(movieItem.getOverview());
 
-        TextView title = (TextView)findViewById(R.id.original_title);
+        TextView title = (TextView)findViewById(R.id.title);
         title.setText(movieItem.getTitle());
 
 

@@ -26,12 +26,9 @@
 
         <activity android:name=".DetailActivity"
             />
-        <activity android:name=".MainActivity">
 
-        </activity>
-        <activity android:name=".SettingsActivity">
 
-        </activity>
+
 
     </application>
 

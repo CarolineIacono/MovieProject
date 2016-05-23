@@ -13,26 +13,9 @@
         android:scaleType="centerInside"/>
 
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#FFFFFF"
-        android:gravity="center"
-        android:minHeight="?android:attr/listPreferredItemHeight"
 
 
-        />
 
-    <TextView
-        android:id="@+id/overview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="#FFFFFF"
-        android:gravity="center"
-        android:minHeight="?android:attr/listPreferredItemHeight"/>
 
 
 
