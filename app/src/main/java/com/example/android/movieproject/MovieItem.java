@@ -46,7 +46,7 @@ public class MovieItem implements Serializable {
     }
 
     public String getVote() {
-        return vote_average;
+        return "User rating: " + vote_average ;
     }
 
     public void setVote(String vote_average) {
@@ -54,7 +54,7 @@ public class MovieItem implements Serializable {
     }
 
     public String getRelease() {
-        return release_date;
+        return "Release date: " + release_date;
     }
 
     public void setRelease(String release_date){

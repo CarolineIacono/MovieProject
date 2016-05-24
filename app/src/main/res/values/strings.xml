@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">MovieProject</string>
+    <string name="app_name">Movie Project</string>
     <string name="action_settings">Settings</string>
     <string name="option1">Most Popular</string>
     <string name="option2">Highest Rated</string>
+    <string name="detail_activity">Detail Screen</string>
+
 </resources>
