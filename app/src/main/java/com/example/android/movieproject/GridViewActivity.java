@@ -20,9 +20,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -31,13 +35,15 @@ import java.util.ArrayList;
 public class GridViewActivity extends AppCompatActivity {
     private static final String TAG = GridViewActivity.class.getSimpleName();
     public static final String EXTRA_MOVIE = "movie";
+    public static final String EXTRA_TRAILERS = "trailers";
 
     private GridView mGridView;
 
     private MovieGridAdapter mGridAdapter;
     private ArrayList<MovieItem> mGridData;
-    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=";
-    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=";
+    private Map<Integer, List<MovieItem>> trailers = new HashMap<>();
+    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
 
 
     @Override
@@ -78,14 +84,16 @@ public class GridViewActivity extends AppCompatActivity {
 
 
 
+
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-           ///take to the details view
+            ///take to the details view
 
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
                 Intent intent = new Intent(GridViewActivity.this, DetailActivity.class);
-                intent.putExtra(EXTRA_MOVIE, (MovieItem)parent.getItemAtPosition(position));
+                intent.putExtra(EXTRA_MOVIE, (MovieItem) parent.getItemAtPosition(position));
+                intent.putExtra(EXTRA_TRAILERS, (Serializable)trailers.get(position));
                 startActivity(intent);
 
 
@@ -102,51 +110,58 @@ public class GridViewActivity extends AppCompatActivity {
         @Override
         protected Integer doInBackground(String... params) {
             String urlString = params[0];
+
+
+            int result = parseResult(fetch(urlString));
+            for (int i = 0; i < mGridData.size(); i++) {
+                MovieItem item = mGridData.get(i);
+                String trailerUrl = "https://api.themoviedb.org/3/movie/" + item.getId() + "/videos?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+                String unformattedJSON = fetch(urlString);
+                parseTrailer(i, unformattedJSON);
+
+            }
+            return 1;
+
+        }
+
+
+        private String fetch(String urlString) {
+
             Integer result = 0;
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-// Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
 
             try {
 
                 URL url = new URL(urlString);
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
-                // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
                     forecastJsonStr = null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
+
                     buffer.append(line + "\n");
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     forecastJsonStr = null;
                 }
                 forecastJsonStr = buffer.toString();
 
-                parseResult(forecastJsonStr);
-                result = 1;
+
             } catch (IOException e) {
                 Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
                 forecastJsonStr = null;
             } finally {
                 if (urlConnection != null) {
@@ -160,8 +175,7 @@ public class GridViewActivity extends AppCompatActivity {
                     }
                 }
             }
-
-            return result;
+            return forecastJsonStr;
         }
 
         @Override
@@ -175,12 +189,12 @@ public class GridViewActivity extends AppCompatActivity {
                 Toast.makeText(GridViewActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
 
-
-            }
-
         }
 
-        private void parseResult(String result) {
+
+        private int parseResult(String result) {
+            String id;
+            int success = 0;
             try {
                 JSONObject response = new JSONObject(result);
                 JSONArray posts = response.optJSONArray("results");
@@ -199,29 +213,54 @@ public class GridViewActivity extends AppCompatActivity {
                     item.setOverview(overview);
 
                     String vote = post.optString("vote_average");
-                    item.setVote(vote);
+                    item.setVoteAverage(vote);
 
                     String release = post.optString("release_date");
                     item.setRelease(release);
 
-
-
-
-
-
+                    id = post.optString("id");
+                    item.setId(id);
 
 
                     mGridData.add(item);
                 }
+                success = 1;
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            return success;
+
         }
 
+        private void parseTrailer(Integer index, String result) {
 
+            ArrayList<MovieItem> movieItems = new ArrayList<>();
 
+            try {
+                JSONObject trailer = new JSONObject(result);
+                JSONArray posts = trailer.optJSONArray("results");
+                for (int i = 0; i < posts.length(); i++) {
+                    JSONObject post = posts.optJSONObject(i);
+
+                    String key = post.optString("key");
+                    MovieItem item = new MovieItem();
+                    item.setKey(key);
+
+                    String name = post.optString("name");
+                    item.setName(name);
+
+                    movieItems.add(item);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            trailers.put(index, movieItems);
+        }
 
     }
+}
 
 
 

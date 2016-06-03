@@ -52,6 +52,8 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
             holder.overView = (TextView) row.findViewById(R.id.overview);
             holder.voteAverage = (TextView) row.findViewById(R.id.vote_average);
             holder.releaseDate = (TextView) row.findViewById(R.id.release_date);
+           // holder.reviews = (TextView) row.findViewById(R.id.reviews);
+
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
@@ -69,6 +71,9 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
         TextView overView;
         TextView voteAverage;
         TextView releaseDate;
+        TextView reviews;
+        TextView key;
+        TextView name;
     }
 
 
