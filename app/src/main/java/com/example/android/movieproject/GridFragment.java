@@ -1,8 +1,6 @@
 package com.example.android.movieproject;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -71,11 +68,9 @@ public class GridFragment extends Fragment {
 
             ///take to the details view
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-                Intent intent = new Intent(getContext(), DetailActivity.class);
-                intent.putExtra(DetailActivity.EXTRA_MOVIE, (MovieItem) parent.getItemAtPosition(position));
-                intent.putExtra(DetailActivity.EXTRA_TRAILERS, (Serializable) trailers.get(position));
-                startActivity(intent);
+                if (mListener != null) {
+                    mListener.onMovieClick((MovieItem) parent.getItemAtPosition(position));
+                }
             }
         });
 
@@ -84,12 +79,7 @@ public class GridFragment extends Fragment {
         return layout;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void OnItemClick(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -144,7 +134,7 @@ public class GridFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onMovieClick(MovieItem movieItem);
     }
 
     public class MovieFetchTask extends AsyncTask<String, Void, Integer> {

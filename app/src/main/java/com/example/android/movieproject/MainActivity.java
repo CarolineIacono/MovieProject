@@ -1,6 +1,6 @@
 package com.example.android.movieproject;
 
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -18,7 +18,10 @@ public class MainActivity extends FragmentActivity implements GridFragment.OnFra
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onMovieClick(MovieItem movieItem) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(DetailActivity.EXTRA_MOVIE, movieItem);
+        //intent.putExtra(DetailActivity.EXTRA_TRAILERS, (Serializable) trailers.get(position));
+        startActivity(intent);
     }
 }
