@@ -1,23 +1,26 @@
 package com.example.android.movieproject;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 
-public class DetailActivity extends AppCompatActivity {
-
+public class DetailActivity extends FragmentActivity  {
+    public static final String EXTRA_MOVIE = "movie";
+    public static final String EXTRA_TRAILERS = "trailers";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_screen);
 
-        MovieItem movieItem = (MovieItem) getIntent().getSerializableExtra(GridViewActivity.EXTRA_MOVIE);
+
+
+        MovieItem movieItem = (MovieItem) getIntent().getSerializableExtra(EXTRA_MOVIE);
         TextView overview = (TextView) findViewById(R.id.overview);
         overview.setText(movieItem.getOverview());
 

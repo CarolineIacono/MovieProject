@@ -4,5 +4,6 @@
     <string name="option1">Most Popular</string>
     <string name="option2">Highest Rated</string>
     <string name="detail_activity">Detail Screen</string>
+    <string name="main">Main Screen</string>
 
 </resources>

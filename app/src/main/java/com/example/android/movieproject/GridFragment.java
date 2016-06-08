@@ -1,13 +1,18 @@
 package com.example.android.movieproject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -30,82 +35,119 @@ import java.util.Map;
 
 
 /**
- * Created by carolinestewart on 5/6/16.
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link GridFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
  */
-public class GridViewActivity extends AppCompatActivity {
-    private static final String TAG = GridViewActivity.class.getSimpleName();
-    public static final String EXTRA_MOVIE = "movie";
-    public static final String EXTRA_TRAILERS = "trailers";
+public class GridFragment extends Fragment {
+    private static final String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    private static final String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
 
-    private GridView mGridView;
+    private OnFragmentInteractionListener mListener;
 
-    private MovieGridAdapter mGridAdapter;
-    private ArrayList<MovieItem> mGridData;
     private Map<Integer, List<MovieItem>> trailers = new HashMap<>();
-    private String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
-    String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
-
+    private ArrayList<MovieItem> gridData;
+    private MovieGridAdapter gridAdapter;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-        return true;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.fragment_grid, container, false);
+
+        GridView gridView = (GridView) layout.findViewById(R.id.gridView);
+
+        gridData = new ArrayList<>();
+        gridAdapter = new MovieGridAdapter(getContext(), R.layout.movie_item, gridData);
+        gridView.setAdapter(gridAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            ///take to the details view
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra(DetailActivity.EXTRA_MOVIE, (MovieItem) parent.getItemAtPosition(position));
+                intent.putExtra(DetailActivity.EXTRA_TRAILERS, (Serializable) trailers.get(position));
+                startActivity(intent);
+            }
+        });
+
+        new MovieFetchTask().execute(FEED_URL);
+
+        return layout;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_main, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mGridData.clear();
+        gridData.clear();
 
         switch (item.getItemId()) {
 
             case R.id.popular:
-                new AsyncHttpTask().execute(FEED_URL2);
+                new MovieFetchTask().execute(FEED_URL2);
                 break;
             case R.id.rated:
-                new AsyncHttpTask().execute(FEED_URL);
+                new MovieFetchTask().execute(FEED_URL);
         }
 
         return true;
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.movielayout);
-
-        mGridView = (GridView) findViewById(R.id.gridView);
-
-        mGridData = new ArrayList<>();
-        mGridAdapter = new MovieGridAdapter(this, R.layout.movie_item, mGridData);
-        mGridView.setAdapter(mGridAdapter);
-
-
-
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            ///take to the details view
-
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-                Intent intent = new Intent(GridViewActivity.this, DetailActivity.class);
-                intent.putExtra(EXTRA_MOVIE, (MovieItem) parent.getItemAtPosition(position));
-                intent.putExtra(EXTRA_TRAILERS, (Serializable)trailers.get(position));
-                startActivity(intent);
-
-
-            }
-        });
-
-
-        new AsyncHttpTask().execute(FEED_URL);
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 
-    public class AsyncHttpTask extends AsyncTask<String, Void, Integer> {
+    public class MovieFetchTask extends AsyncTask<String, Void, Integer> {
 
         @Override
         protected Integer doInBackground(String... params) {
@@ -113,8 +155,8 @@ public class GridViewActivity extends AppCompatActivity {
 
 
             int result = parseResult(fetch(urlString));
-            for (int i = 0; i < mGridData.size(); i++) {
-                MovieItem item = mGridData.get(i);
+            for (int i = 0; i < gridData.size(); i++) {
+                MovieItem item = gridData.get(i);
                 String trailerUrl = "https://api.themoviedb.org/3/movie/" + item.getId() + "/videos?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
                 String unformattedJSON = fetch(urlString);
                 parseTrailer(i, unformattedJSON);
@@ -123,7 +165,6 @@ public class GridViewActivity extends AppCompatActivity {
             return 1;
 
         }
-
 
         private String fetch(String urlString) {
 
@@ -183,14 +224,13 @@ public class GridViewActivity extends AppCompatActivity {
 
             if (result == 1) {
 
-                mGridAdapter.setGridData(mGridData);
+                gridAdapter.setGridData(gridData);
 
             } else {
-                Toast.makeText(GridViewActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
 
         }
-
 
         private int parseResult(String result) {
             String id;
@@ -222,7 +262,7 @@ public class GridViewActivity extends AppCompatActivity {
                     item.setId(id);
 
 
-                    mGridData.add(item);
+                    gridData.add(item);
                 }
                 success = 1;
 
@@ -261,10 +301,3 @@ public class GridViewActivity extends AppCompatActivity {
 
     }
 }
-
-
-
-
-
-
-
