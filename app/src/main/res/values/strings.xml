@@ -5,5 +5,7 @@
     <string name="option2">Highest Rated</string>
     <string name="detail_activity">Detail Screen</string>
     <string name="main">Main Screen</string>
+    <string name="title_movieitem_list">Items</string>
+    <string name="title_movieitem_detail">MovieItem Detail</string>
 
 </resources>

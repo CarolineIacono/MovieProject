@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,12 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,71 +135,8 @@ public class GridFragment extends Fragment {
         @Override
         protected Integer doInBackground(String... params) {
             String urlString = params[0];
+            return parseMovieItems(DataUtil.fetch(urlString));
 
-
-            int result = parseResult(fetch(urlString));
-            for (int i = 0; i < gridData.size(); i++) {
-                MovieItem item = gridData.get(i);
-                String trailerUrl = "https://api.themoviedb.org/3/movie/" + item.getId() + "/videos?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
-                String unformattedJSON = fetch(urlString);
-                parseTrailer(i, unformattedJSON);
-
-            }
-            return 1;
-
-        }
-
-        private String fetch(String urlString) {
-
-            Integer result = 0;
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String forecastJsonStr = null;
-
-            try {
-
-                URL url = new URL(urlString);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    forecastJsonStr = null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    forecastJsonStr = null;
-                }
-                forecastJsonStr = buffer.toString();
-
-
-            } catch (IOException e) {
-                Log.e("PlaceholderFragment", "Error ", e);
-                forecastJsonStr = null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
-                    }
-                }
-            }
-            return forecastJsonStr;
         }
 
         @Override
@@ -222,8 +152,7 @@ public class GridFragment extends Fragment {
 
         }
 
-        private int parseResult(String result) {
-            String id;
+        private int parseMovieItems(String result) {
             int success = 0;
             try {
                 JSONObject response = new JSONObject(result);
@@ -248,8 +177,7 @@ public class GridFragment extends Fragment {
                     String release = post.optString("release_date");
                     item.setRelease(release);
 
-                    id = post.optString("id");
-                    item.setId(id);
+                    item.setId(post.optString("id"));
 
 
                     gridData.add(item);
@@ -261,32 +189,6 @@ public class GridFragment extends Fragment {
             }
             return success;
 
-        }
-
-        private void parseTrailer(Integer index, String result) {
-
-            ArrayList<MovieItem> movieItems = new ArrayList<>();
-
-            try {
-                JSONObject trailer = new JSONObject(result);
-                JSONArray posts = trailer.optJSONArray("results");
-                for (int i = 0; i < posts.length(); i++) {
-                    JSONObject post = posts.optJSONObject(i);
-
-                    String key = post.optString("key");
-                    MovieItem item = new MovieItem();
-                    item.setKey(key);
-
-                    String name = post.optString("name");
-                    item.setName(name);
-
-                    movieItems.add(item);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            trailers.put(index, movieItems);
         }
 
     }
