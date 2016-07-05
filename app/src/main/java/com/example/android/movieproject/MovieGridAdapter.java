@@ -71,9 +71,7 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
         TextView overView;
         TextView voteAverage;
         TextView releaseDate;
-        TextView reviews;
-        TextView key;
-        TextView name;
+
     }
 
 

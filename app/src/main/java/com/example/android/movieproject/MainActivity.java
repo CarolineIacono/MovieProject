@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 /**
  * Created by carolinestewart on 6/7/16.
@@ -30,6 +32,14 @@ public class MainActivity extends AppCompatActivity implements GridFragment.OnFr
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public void onMovieClick(MovieItem movieItem) {
 
         if (twoPane) {
@@ -40,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements GridFragment.OnFr
         } else {
             Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra(DetailActivity.EXTRA_MOVIE, movieItem);
-            //intent.putExtra(DetailActivity.EXTRA_TRAILERS, (Serializable) trailers.get(position));
             startActivity(intent);
         }
     }

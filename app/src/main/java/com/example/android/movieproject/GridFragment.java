@@ -1,12 +1,11 @@
 package com.example.android.movieproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 
 /**
@@ -33,12 +32,14 @@ import java.util.Map;
 public class GridFragment extends Fragment {
     private static final String FEED_URL = "https://api.themoviedb.org/3/movie/popular?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
     private static final String FEED_URL2 = "http://api.themoviedb.org/3/movie/top_rated?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
+    private static final String FEED_URL3 = "http://api.themoviedb.org/3/movie/";
+    private static final String API_KEY = "?api_key=3bdc29f12e89d25098ebe99dbec16f9b";
 
     private OnFragmentInteractionListener mListener;
 
-    private Map<Integer, List<MovieItem>> trailers = new HashMap<>();
     private ArrayList<MovieItem> gridData;
     private MovieGridAdapter gridAdapter;
+    private Set<String> favoriteSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,8 @@ public class GridFragment extends Fragment {
 
 
 
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -89,18 +92,24 @@ public class GridFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        Set<String> set = sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), null);
+        if(set != null) {
+            favoriteSet = set;
+        } else {
+            favoriteSet = new HashSet<>();
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
 
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_main, menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -113,10 +122,23 @@ public class GridFragment extends Fragment {
                 break;
             case R.id.rated:
                 new MovieFetchTask().execute(FEED_URL);
+              break;
+            case R.id.favorite:
+                Iterator<String> iterator = favoriteSet.iterator();
+                while (iterator.hasNext()) {
+                    new MovieFetchTask().execute(FEED_URL3 + iterator.next() + API_KEY);
+                }
+
+
+
+
         }
 
         return true;
     }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this

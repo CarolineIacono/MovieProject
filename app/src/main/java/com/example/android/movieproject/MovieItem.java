@@ -12,8 +12,7 @@ public class MovieItem implements Serializable {
     String vote_average;
     String release_date;
     String id;
-    String key;
-    String name;
+
 
 
 
@@ -73,24 +72,9 @@ public class MovieItem implements Serializable {
         return id;
     }
 
-    public void setKey(String key) {
-        this.key = key;
 
-    }
 
-    public String getKey() {
-        return "https://www.youtube.com/watch?v=" + key;
 
-    }
-
-    public void setName(String name) {
-       this.name = name;
-
-    }
-
-    public String getName() {
-        return name;
-    }
 
 
 }
