@@ -95,12 +95,7 @@ public class GridFragment extends Fragment {
     public void onResume() {
         super.onResume();
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        Set<String> set = sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), null);
-        if(set != null) {
-            favoriteSet = set;
-        } else {
-            favoriteSet = new HashSet<>();
-        }
+        favoriteSet = new HashSet<>(sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), new HashSet<String>()));
     }
 
     @Override
