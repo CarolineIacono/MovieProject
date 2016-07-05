@@ -3,12 +3,12 @@ package com.example.android.movieproject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by carolinestewart on 6/7/16.
  */
-public class MainActivity extends FragmentActivity implements GridFragment.OnFragmentInteractionListener, DetailFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements GridFragment.OnFragmentInteractionListener, DetailFragment.OnFragmentInteractionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 

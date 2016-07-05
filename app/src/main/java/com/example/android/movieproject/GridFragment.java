@@ -48,6 +48,9 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
+
         // Inflate the layout for this fragment
         ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.fragment_grid, container, false);
 
