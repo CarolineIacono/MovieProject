@@ -1,7 +1,6 @@
 package com.example.android.movieproject;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -10,9 +9,10 @@ import android.view.MenuInflater;
 /**
  * Created by carolinestewart on 6/7/16.
  */
-public class MainActivity extends AppCompatActivity implements GridFragment.OnFragmentInteractionListener, DetailFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener, OnFavoriteListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private GridFragment gridFragment;
 
     private boolean twoPane;
 
@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements GridFragment.OnFr
             // activity should be in two-pane mode.
             twoPane = true;
         }
+        gridFragment = new GridFragment();
+        getSupportFragmentManager().beginTransaction().add(gridFragment, "gridFragment").commit();
+
 
     }
 
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GridFragment.OnFr
 
         if (twoPane) {
             DetailFragment fragment = new DetailFragment(movieItem);
+            fragment.setFavoriteListener(this);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_container, fragment)
                     .commit();
@@ -54,9 +58,16 @@ public class MainActivity extends AppCompatActivity implements GridFragment.OnFr
         }
     }
 
-
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onUpdateFavorite(String favorite, boolean isFavorited) {
+
+        gridFragment.updateFavorite(favorite, isFavorited);
+    }
+
+
+    public interface OnFragmentInteractionListener {
+
+        void onMovieClick(MovieItem movieItem);
 
     }
 }

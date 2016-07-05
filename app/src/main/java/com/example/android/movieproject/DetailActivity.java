@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
 
-public class DetailActivity extends FragmentActivity implements DetailFragment.OnFragmentInteractionListener {
+public class DetailActivity extends FragmentActivity  {
 
     public static final String EXTRA_MOVIE = "movie";
 
@@ -25,12 +25,5 @@ public class DetailActivity extends FragmentActivity implements DetailFragment.O
 
     }
 
-
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-
-    }
 
 }

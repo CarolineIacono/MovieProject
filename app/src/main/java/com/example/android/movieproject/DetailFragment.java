@@ -30,10 +30,12 @@ import java.util.Set;
 public class DetailFragment extends Fragment {
 
     private static final String EXTRA_MOVIE = "EXTRA_MOVIE";
-    private OnFragmentInteractionListener mListener;
     private boolean isFavorited = false;
     public Button favoriteButton;
     private MovieItem movieItem;
+
+
+    private OnFavoriteListener favoriteListener;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -53,6 +55,10 @@ public class DetailFragment extends Fragment {
         } else {
             favoriteButton.setBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
         }
+    }
+
+    public void setFavoriteListener (OnFavoriteListener favoriteListener) {
+        this.favoriteListener = favoriteListener;
     }
 
     @Override
@@ -167,6 +173,9 @@ public class DetailFragment extends Fragment {
             public void onClick(View v) {
                 isFavorited = !isFavorited;
                 updateButton();
+                if(favoriteListener != null) {
+                    favoriteListener.onUpdateFavorite(movieItem.getId(), isFavorited);
+                }
             }
         });
 
@@ -175,34 +184,23 @@ public class DetailFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onPause() {
-        mListener = null;
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+        if(favoriteListener == null) {
+            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
 
-        Set<String> set = new HashSet<>(sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), new HashSet<String>()));
+            Set<String> set = new HashSet<>(sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), new HashSet<String>()));
 
 
-        if (isFavorited) {
-            set.add(String.valueOf(movieItem.getId()));
-        } else {
-            set.remove(String.valueOf(movieItem.getId()));
+            if (isFavorited) {
+                set.add(String.valueOf(movieItem.getId()));
+            } else {
+                set.remove(String.valueOf(movieItem.getId()));
+            }
+
+            editor.putStringSet(getActivity().getResources().getString(R.string.favorite), set);
+            editor.commit();
         }
-
-        editor.putStringSet(getActivity().getResources().getString(R.string.favorite), set);
-        editor.commit();
-
         super.onPause();
 
     }
@@ -254,13 +252,6 @@ public class DetailFragment extends Fragment {
         return review;
     }
 
-    public void onFavoriteClick(View view) {
-
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(String.valueOf(getId()), true);
-        editor.commit();
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -272,9 +263,5 @@ public class DetailFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
 
-        void onFragmentInteraction(Uri uri);
-
-    }
 }

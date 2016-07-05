@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GridFragment.OnFragmentInteractionListener} interface
+ * {@link MainActivity.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
 public class GridFragment extends Fragment {
@@ -77,9 +77,6 @@ public class GridFragment extends Fragment {
     }
 
 
-
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -105,7 +102,6 @@ public class GridFragment extends Fragment {
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         gridData.clear();
@@ -117,7 +113,7 @@ public class GridFragment extends Fragment {
                 break;
             case R.id.rated:
                 new MovieFetchTask().execute(FEED_URL);
-              break;
+                break;
             case R.id.favorite:
                 Iterator<String> iterator = favoriteSet.iterator();
                 while (iterator.hasNext()) {
@@ -125,14 +121,10 @@ public class GridFragment extends Fragment {
                 }
 
 
-
-
         }
 
         return true;
     }
-
-
 
 
     /**
@@ -145,11 +137,6 @@ public class GridFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onMovieClick(MovieItem movieItem);
-    }
-
     public class MovieFetchTask extends AsyncTask<String, Void, Integer> {
 
         @Override
@@ -177,30 +164,14 @@ public class GridFragment extends Fragment {
             try {
                 JSONObject response = new JSONObject(result);
                 JSONArray posts = response.optJSONArray("results");
-                for (int i = 0; i < posts.length(); i++) {
-                    JSONObject post = posts.optJSONObject(i);
+                if (posts == null) {
+                    parseSingleObject(response);
+                } else {
 
-                    String title = post.optString("title");
-                    MovieItem item = new MovieItem();
-                    item.setTitle(title);
-
-                    String image = post.optString("poster_path");
-                    image = "http://image.tmdb.org/t/p/w185/" + image;
-                    item.setImage(image);
-
-                    String overview = post.optString("overview");
-                    item.setOverview(overview);
-
-                    String vote = post.optString("vote_average");
-                    item.setVoteAverage(vote);
-
-                    String release = post.optString("release_date");
-                    item.setRelease(release);
-
-                    item.setId(post.optString("id"));
-
-
-                    gridData.add(item);
+                    for (int i = 0; i < posts.length(); i++) {
+                        JSONObject post = posts.optJSONObject(i);
+                        parseSingleObject(post);
+                    }
                 }
                 success = 1;
 
@@ -209,7 +180,52 @@ public class GridFragment extends Fragment {
             }
             return success;
 
-        }
 
+        }
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putStringSet(getActivity().getResources().getString(R.string.favorite), favoriteSet);
+        editor.commit();
+
+        super.onPause();
+    }
+
+    public void updateFavorite(String favorite, boolean isFavorited) {
+        if (isFavorited) {
+            //adding to the set of favorite movies
+            favoriteSet.add(favorite);
+        } else {
+            favoriteSet.remove(favorite);
+        }
+    }
+
+    public void parseSingleObject(JSONObject post) {
+        String title = post.optString("title");
+        MovieItem item = new MovieItem();
+        item.setTitle(title);
+
+
+        String image = post.optString("poster_path");
+        image = "http://image.tmdb.org/t/p/w185/" + image;
+        item.setImage(image);
+
+        String overview = post.optString("overview");
+        item.setOverview(overview);
+
+        String vote = post.optString("vote_average");
+        item.setVoteAverage(vote);
+
+        String release = post.optString("release_date");
+        item.setRelease(release);
+
+        item.setId(post.optString("id"));
+
+        gridData.add(item);
     }
 }
+
