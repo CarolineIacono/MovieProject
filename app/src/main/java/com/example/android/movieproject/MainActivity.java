@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movielayout);
-
+        gridFragment = new GridFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, gridFragment).commit();
         if (findViewById(R.id.detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -28,11 +29,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             // activity should be in two-pane mode.
             twoPane = true;
         }
-        gridFragment = new GridFragment();
-        getSupportFragmentManager().beginTransaction().add(gridFragment, "gridFragment").commit();
+
 
 
     }
+
+  
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
