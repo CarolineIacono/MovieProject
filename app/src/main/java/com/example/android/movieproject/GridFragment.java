@@ -40,10 +40,18 @@ public class GridFragment extends Fragment {
     private ArrayList<MovieItem> gridData;
     private MovieGridAdapter gridAdapter;
     private Set<String> favoriteSet;
+    private int state = R.id.rated;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gridData = new ArrayList<>();
+        if (savedInstanceState != null) {
+            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            favoriteSet = new HashSet<>(sharedPref.getStringSet(getActivity().getResources().getString(R.string.favorite), new HashSet<String>()));
+            state = savedInstanceState.getInt("stateOptions");
+            optionsSwitch(state);
+        }
     }
 
     @Override
@@ -57,7 +65,6 @@ public class GridFragment extends Fragment {
 
         GridView gridView = (GridView) layout.findViewById(R.id.gridView);
 
-        gridData = new ArrayList<>();
         gridAdapter = new MovieGridAdapter(getContext(), R.layout.movie_item, gridData);
         gridView.setAdapter(gridAdapter);
 
@@ -102,11 +109,8 @@ public class GridFragment extends Fragment {
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        gridData.clear();
-
-        switch (item.getItemId()) {
+    private void optionsSwitch(int id) {
+        switch (id) {
 
             case R.id.popular:
                 new MovieFetchTask().execute(FEED_URL2);
@@ -119,9 +123,14 @@ public class GridFragment extends Fragment {
                 while (iterator.hasNext()) {
                     new MovieFetchTask().execute(FEED_URL3 + iterator.next() + API_KEY);
                 }
-
-
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        gridData.clear();
+        state = item.getItemId();
+        optionsSwitch(state);
 
         return true;
     }
@@ -182,6 +191,12 @@ public class GridFragment extends Fragment {
 
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("stateOptions", state);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

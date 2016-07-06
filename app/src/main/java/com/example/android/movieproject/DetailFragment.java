@@ -35,6 +35,7 @@ public class DetailFragment extends Fragment {
     private MovieItem movieItem;
 
 
+
     private OnFavoriteListener favoriteListener;
 
     public DetailFragment() {
@@ -181,6 +182,8 @@ public class DetailFragment extends Fragment {
 
         return layout;
     }
+
+
 
 
     @Override

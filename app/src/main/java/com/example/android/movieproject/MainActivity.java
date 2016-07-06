@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.movielayout);
         gridFragment = new GridFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, gridFragment).commit();
@@ -29,12 +31,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             // activity should be in two-pane mode.
             twoPane = true;
         }
-
-
-
     }
 
-  
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
