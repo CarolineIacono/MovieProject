@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.android.movieproject.MainActivity">
+    tools:context="com.example.android.movieproject.GridFragment">
 
 
     <item
@@ -12,5 +12,8 @@
         android:title="@string/option1"/>
     <item android:id="@+id/rated"
         android:title="@string/option2" />
+    <item android:id="@+id/favorite"
+        android:title="@string/favorite" />
+
 
 </menu>

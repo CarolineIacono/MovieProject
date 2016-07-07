@@ -2,7 +2,6 @@ package com.example.android.movieproject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,18 +47,18 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.titleTextView = (TextView) row.findViewById(R.id.name);
+            holder.titleTextView = (TextView) row.findViewById(R.id.title);
             holder.imageView = (ImageView) row.findViewById(R.id.movieImage);
             holder.overView = (TextView) row.findViewById(R.id.overview);
             holder.voteAverage = (TextView) row.findViewById(R.id.vote_average);
             holder.releaseDate = (TextView) row.findViewById(R.id.release_date);
+
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
         }
 
         MovieItem item = mGridData.get(position);
-        holder.titleTextView.setText(Html.fromHtml(item.getTitle()));
 
         Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
         return row;
@@ -71,6 +70,7 @@ public class MovieGridAdapter extends ArrayAdapter<MovieItem> {
         TextView overView;
         TextView voteAverage;
         TextView releaseDate;
+
     }
 
 
