@@ -2,6 +2,8 @@ package com.example.android.movieproject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,7 +54,10 @@ public class GridFragment extends Fragment {
             state = savedInstanceState.getInt("stateOptions");
             optionsSwitch(state);
         }
+
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,8 +83,21 @@ public class GridFragment extends Fragment {
             }
         });
 
-        new MovieFetchTask().execute(FEED_URL);
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
+            new MovieFetchTask().execute(FEED_URL);
+
+        } else {
+            Toast.makeText(getContext(), "No network connection", Toast.LENGTH_SHORT).show();
+
+
+        }
         return layout;
     }
 
@@ -110,21 +128,42 @@ public class GridFragment extends Fragment {
 
 
     private void optionsSwitch(int id) {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
         switch (id) {
 
+
             case R.id.popular:
-                new MovieFetchTask().execute(FEED_URL2);
+                if (isConnected) {
+                    new MovieFetchTask().execute(FEED_URL2);
+                } else {
+                    Toast.makeText(getContext(), "No network connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.rated:
-                new MovieFetchTask().execute(FEED_URL);
+                if (isConnected) {
+                    new MovieFetchTask().execute(FEED_URL);
+                } else {
+                    Toast.makeText(getContext(), "No network connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.favorite:
-                Iterator<String> iterator = favoriteSet.iterator();
-                while (iterator.hasNext()) {
-                    new MovieFetchTask().execute(FEED_URL3 + iterator.next() + API_KEY);
+                if (isConnected) {
+                    Iterator<String> iterator = favoriteSet.iterator();
+                    while (iterator.hasNext())
+                        new MovieFetchTask().execute(FEED_URL3 + iterator.next() + API_KEY);
+                } else {
+                    Toast.makeText(getContext(), "No network connection", Toast.LENGTH_SHORT).show();
                 }
         }
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -147,6 +186,8 @@ public class GridFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public class MovieFetchTask extends AsyncTask<String, Void, Integer> {
+
+
 
         @Override
         protected Integer doInBackground(String... params) {
@@ -176,6 +217,7 @@ public class GridFragment extends Fragment {
                 if (posts == null) {
                     parseSingleObject(response);
                 } else {
+
 
                     for (int i = 0; i < posts.length(); i++) {
                         JSONObject post = posts.optJSONObject(i);
